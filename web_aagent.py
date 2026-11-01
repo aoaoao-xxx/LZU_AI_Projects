@@ -37,20 +37,17 @@ def lzu_info(query: str) -> str:
         return "没有找到相关的内部信息。"
 
 # 4. 定义工具三：查天气
+# 把原来的 get_weather 函数替换成这样：
 @tool
 def get_weather(city: str) -> str:
-    """当用户需要查询某个城市的天气时，请使用此工具。输入应该是城市名称，比如'兰州'。"""
+    """当用户需要查询天气时，请使用此工具。"""
     try:
-        # 调用免费的天气 API
-        url = f"https://wttr.in/{city}?format=3"
-        response = requests.get(url, timeout=5)
-        if response.status_code == 200:
-            return response.text
-        else:
-            return "天气服务暂时不可用。"
-    except Exception:
-        # 网络不通时的兜底数据
-        return f"{city}：晴，22℃，微风。"
+        # 核心知识点：用 with open 读取本地文件
+        with open("weather.txt", "r", encoding="utf-8") as f:
+            weather_info = f.read()
+        return weather_info
+    except FileNotFoundError:
+        return "抱歉，本地没有找到天气数据文件。"
 
 # 5. 把三个工具装进工具箱
 tools = [calculate, lzu_info, get_weather]
